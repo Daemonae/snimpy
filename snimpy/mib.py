@@ -170,6 +170,18 @@ class Node(object):
         return f.decode("ascii")
 
     @property
+    def moduleName(self):
+        """Get the name of the module this node was declared in.
+
+        :return: MIB name for the module.
+        """
+        module = _smi.smiGetNodeModule(self.node)
+        if module == ffi.NULL:
+            raise SMIException("unable to get module for {0}".format(
+                self.node.name))
+        return ffi.string(module.name).decode('utf-8')
+
+    @property
     def oid(self):
         """Get OID for the current node. The OID can then be used to request
         the node from an SNMP agent.
@@ -240,13 +252,9 @@ class Node(object):
         if r == ffi.NULL:
             return "<uninitialized {0} object at {1}>".format(
                 self.__class__.__name__, hex(id(self)))
-        module = _smi.smiGetNodeModule(self.node)
-        if module == ffi.NULL:
-            raise SMIException("unable to get module for {0}".format(
-                self.node.name))
         return "<{0} {1} from '{2}'>".format(self.__class__.__name__,
                                              ffi.string(r),
-                                             ffi.string(module.name))
+                                             self.moduleName)
 
     def _convert(self, value):
         attr = {_smi.SMI_BASETYPE_INTEGER32: "integer32",

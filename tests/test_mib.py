@@ -384,3 +384,11 @@ class TestMibSnimpy(unittest.TestCase):
 
         attr = mib.get("SNIMPY-MIB", "snimpySimpleIndex")
         self.assertEqual(attr.typeName, b"Integer32")
+
+    def testModuleName(self):
+        """Check that moduleName is correct for a sample of nodes."""
+        attr = mib.get("SNIMPY-MIB", "snimpy")
+        self.assertEqual(attr.moduleName, "SNIMPY-MIB")
+
+        attr = mib.get("SNMPv2-SMI", "zeroDotZero")
+        self.assertEqual(attr.moduleName, u"SNMPv2-SMI")
